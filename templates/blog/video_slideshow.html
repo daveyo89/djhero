@@ -1,0 +1,19 @@
+<main class="container">
+<div class="jumbotron">
+<div class="album py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            {% for video in videos %}
+                <div class="col-md-4 d-flex">
+                    <div class="card mb-4 box-shadow">
+                        <a class="card-link">
+                            <iframe class="card-img-top hover-shadow cursor" style="max-width: 100%; display: block;" src="{{video.video_link}}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</div>
+</main>

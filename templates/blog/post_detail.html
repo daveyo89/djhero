@@ -1,0 +1,61 @@
+{% extends "blog/base.html" %}
+{% load cloudinary %}
+
+{% load static %}
+{% load bootstrap4 %}
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'blog/css/slideshow.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'blog/css/post_detail.css' %}">
+    <script src="{% static 'blog/js/slideshow.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <main role="main" class="container">
+        <div class="jumbotron">
+            <div class="row">
+                <div class="col-md-8 blog-main">
+                    <div class="blog-post">
+                        <h2 class="blog-post-title">{{ post.title }}</h2>
+                        <p class="blog-post-meta">{{ post.date }} by <strong> {{ post.author.username }} </strong>
+                        </p>
+
+                        <hr>
+
+                        {{ post.content|safe }}
+                    </div>
+                </div>
+                <aside class="col-md-4 blog-sidebar">
+                    <img class="img-thumbnail post_detail_thumbnail" src="{{ post.image.url }}" alt=""
+                         id="cover-image"/>
+                    <hr>
+
+                    <div class="p-3 mb-3 bg-light rounded">
+                        <h4 class="font-italic">Read More</h4>
+                        <p class="mb-0">
+                            <a href="{{ post.get_previous_by_date.slug }}" class="btn btn-secondary btn-sm
+                                    {% if post.get_previous_by_date.slug != '' and post.get_previous_by_date.category == post.category %} {{ 'active' }} {% else %} {{ 'disabled' }}{% endif %}"
+                               role="button" aria-pressed="true">Previous</a>
+                            <a href="{{ post.get_next_by_date.slug }}"
+                               class="btn btn-primary btn-sm {% if post.get_next_by_date.slug != '' and post.get_next_by_date.category == post.category %} {{ 'active' }} {% else %} {{ 'disabled' }}{% endif %}"
+                               role="button" aria-pressed="true">Next</a>
+                        </p>
+
+                    </div>
+                    <div class="p-3 mb-3 bg-light rounded">
+                        <a href="{% url 'category' post.category.slug %}" class="btn btn-primary btn-block" role="button" aria-pressed="true">Back to {{ post.category }}</a>
+                        <a href="{% url 'blog' %}" class="btn btn-secondary btn-block" role="button" aria-pressed="true">Back to All</a>
+                    </div>
+                </aside>
+
+            </div>
+        </div>
+    </main>
+
+    {% if photos|length > 0 %}
+        {% include 'blog/slideshow.html' %}
+    {% endif %}
+
+    {% if videos|length > 0 %}
+        {% include 'blog/video_slideshow.html' %}
+    {% endif %}
+{% endblock %}
