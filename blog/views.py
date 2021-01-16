@@ -1,7 +1,8 @@
-from cloudinary import CloudinaryImage
 from django.views.generic import ListView, DetailView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from blog.models import Category, Post, PostImage, PostVideo, Introduction
+from blog.serializers import PostSerializer
+from rest_framework import generics
 
 
 class Home(ListView):
@@ -39,7 +40,7 @@ class CategoryView(ListView):
 
     queryset = Post.objects.filter(status="P")
 
-    def get_context_data(self):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data()
         category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
         context['categories'] = Category.objects.all()
@@ -59,7 +60,7 @@ class PostListView(ListView):
     paginate_by = 6
     queryset = Post.objects.filter(status="P")
 
-    def get_context_data(self):
+    def get_context_data(self, **kwargs):
         context = super().get_context_data()
 
         context['categories'] = Category.objects.all()
@@ -103,4 +104,15 @@ class PhotoDetailView(DetailView):
 
         context["photo"] = photo
         return context
+
+
+class PostListRest(generics.ListCreateAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
+class PostDetailRest(generics.RetrieveUpdateDestroyAPIView):
+    lookup_field = 'slug'
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
