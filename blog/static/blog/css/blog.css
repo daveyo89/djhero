@@ -7,4 +7,5 @@
 .blog_card_image {
     width: 200px;
     height: 220px;
+    min-width: 200px;
 }
