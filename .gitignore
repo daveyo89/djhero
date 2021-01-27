@@ -5,3 +5,5 @@ hero_env.cmd
 /media/tinymce/js/tinymce/plugins/
 /media/tinymce/js/tinymce/skins/
 /media/tinymce/js/tinymce/themes/
+/staticfiles/*
+/static/**
