@@ -3,16 +3,16 @@
 {% load bootstrap4 %}
 {% bootstrap_pagination page_obj %}
 {% block extra_head %}
-    <link rel="stylesheet" type="text/css" href="{% static 'blog/css/index.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'blog/css/index.css' %}">
 {% endblock %}
 {% block content %}
-    <div class="cover-container d-flex h-100 p-3 mx-auto flex-column introduction">
-            <main role="main" class="inner cover">
-                <h1 class="cover-heading">{{ intro.0.title|default:'Welcome' }}</h1>
-                <p class="lead">{{ message|default:'' }}</p>
-                <p class="lead">
-                    <a href="{% url 'blog' %}" class="btn btn-lg btn-secondary">Enter</a>
-                </p>
-            </main>
-        </div>
+<div class="cover-container d-flex h-100 p-3 mx-auto flex-column introduction">
+    <main role="main" class="inner cover">
+        <h1 class="cover-heading">{{ intro.0.title|default:'Welcome' }}</h1>
+        <p class="lead">{{ message|default:'' }}</p>
+        <p class="lead">
+            <a href="{% url 'blog' %}" class="btn btn-lg btn-secondary">Enter</a>
+        </p>
+    </main>
+</div>
 {% endblock %}

@@ -3,7 +3,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from blog.models import Category, Post, PostImage, PostVideo, Introduction
 from blog.serializers import PostSerializer
 from rest_framework import generics
-
+from django.db.models import Count
 
 class Home(ListView):
     model = Introduction
@@ -43,7 +43,7 @@ class CategoryView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
-        context['categories'] = Category.objects.all()
+        context['categories'] = Category.objects.annotate(post_count=Count('post'))
         context['current_category'] = category
         return context
 
@@ -63,7 +63,8 @@ class PostListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
 
-        context['categories'] = Category.objects.all()
+        context['categories'] = Category.objects.annotate(post_count=Count('post'))
+
         paginator = Paginator(self.queryset, self.paginate_by)
         page = self.request.GET.get('page')
 
@@ -86,7 +87,8 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         post = self.get_object()
-
+        context['previous_post'] = Post.objects.filter(id__lt=post.id, category=post.category).order_by('-id').first()
+        context['next_post'] = Post.objects.filter(id__gt=post.id, category=post.category).order_by('id').first()
         context['categories'] = Category.objects.all()
         context['photos'] = PostImage.objects.filter(post=post)
         context['videos'] = PostVideo.objects.filter(post=post)

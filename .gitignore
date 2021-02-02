@@ -1,8 +1,5 @@
 .env
 hero_env.cmd
 .idea
-/media/tinymce/js/tinymce/langs/
-/media/tinymce/js/tinymce/plugins/
-/media/tinymce/js/tinymce/skins/
-/media/tinymce/js/tinymce/themes/
+/media/tinymce
 **.pyc

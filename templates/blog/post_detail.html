@@ -30,13 +30,13 @@
                     <hr>
 
                     <div class="p-3 mb-3 bg-light rounded">
-                        <h4 class="font-italic">Read More</h4>
+                        <h4 class="font-italic">Read More from {{ post.category }}</h4>
                         <p class="mb-0">
-                            <a href="{{ post.get_previous_by_date.slug }}" class="btn btn-secondary btn-sm
-                                    {% if post.get_previous_by_date.slug != '' and post.get_previous_by_date.category == post.category %} {{ 'active' }} {% else %} {{ 'disabled' }}{% endif %}"
+                            <a href="{{ previous_post.slug }}" class="btn btn-secondary btn-sm
+                                    {% if previous_post.slug %} {{ 'active' }} {% else %} {{ 'disabled' }}{% endif %}"
                                role="button" aria-pressed="true">Previous</a>
-                            <a href="{{ post.get_next_by_date.slug }}"
-                               class="btn btn-primary btn-sm {% if post.get_next_by_date.slug != '' and post.get_next_by_date.category == post.category %} {{ 'active' }} {% else %} {{ 'disabled' }}{% endif %}"
+                            <a href="{{ next_post.slug }}"
+                               class="btn btn-primary btn-sm {% if next_post.slug %} {{ 'active' }} {% else %} {{ 'disabled' }}{% endif %}"
                                role="button" aria-pressed="true">Next</a>
                         </p>
 
