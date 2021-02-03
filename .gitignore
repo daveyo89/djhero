@@ -1,5 +1,4 @@
 .env
 hero_env.cmd
 .idea
-/media/tinymce
 **.pyc

@@ -5,6 +5,7 @@ from blog.serializers import PostSerializer
 from rest_framework import generics
 from django.db.models import Count
 
+
 class Home(ListView):
     model = Introduction
     template_name = 'blog/index.html'
@@ -34,23 +35,42 @@ class SearchView(ListView):
 
 
 class CategoryView(ListView):
-    model = Post
+    model = Category
     context_object_name = "posts"
-    template_name = "blog/blog.html"
+    paginate_by = 2
+    template_name = "blog/category.html"
 
-    queryset = Post.objects.filter(status="P")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
+    # queryset = Post.objects.filter(status="P")
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(CategoryView, self).get_context_data()
         category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
-        context['categories'] = Category.objects.annotate(post_count=Count('post'))
-        context['current_category'] = category
+        context['posts'] = Post.objects.filter(category=category)
+
         return context
 
-    def get_queryset(self):
-        category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
-        queryset = Post.objects.filter(category=category, status="P")
-        return queryset
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data()
+    #     category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
+    #     page = self.request.GET.get('page')
+    #     paginator = Paginator(self.queryset, self.paginate_by)
+    #
+    #     try:
+    #         posts = paginator.page(page)
+    #     except PageNotAnInteger:
+    #         posts = paginator.page(1)
+    #     except EmptyPage:
+    #         posts = paginator.page(paginator.num_pages)
+    #     context['posts'] = posts
+    #     context['categories'] = Category.objects.annotate(post_count=Count('post'))
+    #     context['posts_in_category'] = Post.objects.filter(status="P", category=category)
+    #     context['current_category'] = category
+    #     print(context['posts_in_category'])
+    #     return context
+
+    # def get_queryset(self):
+    #     category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
+    #     queryset = Post.objects.filter(category=category, status="P")
+    #     return queryset
 
 
 class PostListView(ListView):
@@ -89,7 +109,6 @@ class PostDetailView(DetailView):
         post = self.get_object()
         context['previous_post'] = Post.objects.filter(id__lt=post.id, category=post.category).order_by('-id').first()
         context['next_post'] = Post.objects.filter(id__gt=post.id, category=post.category).order_by('id').first()
-        context['categories'] = Category.objects.all()
         context['photos'] = PostImage.objects.filter(post=post)
         context['videos'] = PostVideo.objects.filter(post=post)
         return context

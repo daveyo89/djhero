@@ -17,27 +17,27 @@
                     All
                 </a>
                 {% for category in categories %}
+                {% if category.post_count > 0 %}
                     <a class="p-2 text-muted" href="{% url 'category' category.slug %}">
-                        {% if category.post_count > 0 %} {{ category.name }}({{ category.post_count}})
-                        {% endif %}
+                            {{ category.name }}({{ category.post_count}})
                     </a>
+                {% endif %}
                 {% endfor %}
             </nav>
         </div>
         <hr>
 
-        <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark row">
-            <div class="col-md-6 px-0 ">
+        <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark row category_image"
+             {% if current_category.image.url %}
+             style="background-image: url('{{current_category.image.url}}');"
+             {% else %}
+             style="background-image: url('/static/blog/cover.jpg');"
+             {% endif %}>
+            <div class="col-md-6 px-0">
                     <h3 class="display-4 font-italic">{{ current_category.name|default:"All Posts" }}</h3>
                     <p class="lead my-3">{{ current_category.description|default:"" }}</p>
 
             </div>
-            {% if current_category.image.url %}
-            <div  class="col-md-6 px-0" >
-                <img class="flex-auto img-fluid d-none d-lg-block category_image" src="{{ current_category.image.url|default:'' }}"
-                     alt="Card image cap">
-            </div>
-            {% endif %}
         </div>
         {% if is_paginated %}
             {% bootstrap_pagination posts url="?page=" size="large" %}
@@ -57,7 +57,7 @@
                         </div>
                         <div>
                             <img class="flex-auto img-fluid d-none d-lg-block blog_card_image" src="{{ post.image.url }}"
-                                 alt="Card image cap">
+                                 alt="Card image cap" onerror=this.src="https://res.cloudinary.com/hxrgp5vol/image/upload/v1611772110/samples/landscapes/nature-mountains.jpg">
                         </div>
 
                     </div>

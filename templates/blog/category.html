@@ -1,27 +1,33 @@
 {% extends "blog/base.html" %}
 {% load static %}
 {% load bootstrap4 %}
+{% bootstrap_pagination page_obj %}
 
 {% block extra_head %}
-    <link href="{% static 'blog/css/base.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'blog/css/category.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
-    <div id="card-holder">
-        {% for post in posts %}
-            <div class="card">
-                <a class="card-link" href="{% url 'post-detail' post.slug %}">
-                    <img src="{{ post.image.url }}" alt=""/>
-                    <div class="inner-div">
-                        <h3>{{ post.title|truncatewords:5 }}</h3>
-                        <p class="author"> {{ post.author.get_full_name }} <span class="date"> | {{ post.date }}</span>
-                        </p>
-                        <p class="para">{{ post.html_to_text|truncatechars:160 }}</p>
-                    </div>
-                </a>
-            </div>
-        {% endfor %}
+<div class="container">
+    {% for post in posts %}
+    <div class="category_cards_background">
 
+    <div class="row">
+            <div class="col-md-4 blog_card_image ">
+                <img class="flex-auto img-fluid d-none d-md-block" src="{{ post.image.url }}" alt="..." onerror=this.src="https://res.cloudinary.com/hxrgp5vol/image/upload/v1611772110/samples/landscapes/nature-mountains.jpg">
+            </div>
+            <div class="card col-md-8 blog_card">
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title }}</h5>
+                    <p class="card-text">{{ post.html_to_text }}</p>
+                    <p class="card-text"><small class="text-muted">{{ post.author.get_full_name }}</small></p>
+                    <p class="mb-1 text-muted">{{ post.date }}</p>
+                    <a href="{% url 'post-detail' post.slug %}">Continue reading</a>
+                </div>
+        </div>
+    </div>
     </div>
 
+    {% endfor %}
+</div>
 {% endblock %}

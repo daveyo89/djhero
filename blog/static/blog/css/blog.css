@@ -11,7 +11,10 @@
 }
 
 .category_image {
-    float: right;
-    width: 400px;
-    height: 330px;
+    background-position: center;
+    background-size: 100%;
+}
+.category_image h3 {
+    /* This value is the OPPOSITE color of our background */
+    mix-blend-mode: difference;
 }

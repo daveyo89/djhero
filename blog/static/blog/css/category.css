@@ -1,0 +1,26 @@
+.blog_card {
+    height: 222px;
+    max-height: 222px;
+}
+
+.blog_card_image img {
+    height: 220px;
+    min-width: 320px;
+}
+
+.card {
+    overflow: auto;
+    overflow-x: hidden;
+    overscroll-behavior-y: auto;
+}
+.card p, h5 {
+    color: whitesmoke;
+    mix-blend-mode: difference;
+}
+
+.category_cards_background {
+    border-radius: 25px;
+    background-color: whitesmoke;
+    margin: 5px;
+    padding: 15px;
+}
