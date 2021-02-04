@@ -37,40 +37,27 @@ class SearchView(ListView):
 class CategoryView(ListView):
     model = Category
     context_object_name = "posts"
-    paginate_by = 2
+    paginate_by = 10
     template_name = "blog/category.html"
+    queryset = Post.objects.get_queryset()
 
-    # queryset = Post.objects.filter(status="P")
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(CategoryView, self).get_context_data()
-        category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
-        context['posts'] = Post.objects.filter(category=category)
+        paginator = Paginator(self.queryset, self.paginate_by)
+        page = self.request.GET.get('page')
 
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        context['posts'] = posts
         return context
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data()
-    #     category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
-    #     page = self.request.GET.get('page')
-    #     paginator = Paginator(self.queryset, self.paginate_by)
-    #
-    #     try:
-    #         posts = paginator.page(page)
-    #     except PageNotAnInteger:
-    #         posts = paginator.page(1)
-    #     except EmptyPage:
-    #         posts = paginator.page(paginator.num_pages)
-    #     context['posts'] = posts
-    #     context['categories'] = Category.objects.annotate(post_count=Count('post'))
-    #     context['posts_in_category'] = Post.objects.filter(status="P", category=category)
-    #     context['current_category'] = category
-    #     print(context['posts_in_category'])
-    #     return context
-
-    # def get_queryset(self):
-    #     category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
-    #     queryset = Post.objects.filter(category=category, status="P")
-    #     return queryset
+    def get_queryset(self):
+        category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
+        return Post.objects.filter(category=category).order_by('-date')
 
 
 class PostListView(ListView):

@@ -81,6 +81,7 @@ class PostImage(models.Model):
             public_id = ''
         return "Photo <%s>" % public_id
 
+
 class PostVideo(models.Model):
     post = models.ForeignKey(Post, default=None, on_delete=models.CASCADE)
     video_link = models.CharField(max_length=600, default='', blank=True)
@@ -88,6 +89,7 @@ class PostVideo(models.Model):
     def save(self, *args, **kwargs):
         self.video_link = self.video_link.replace("watch?v=", "embed/")
         return super().save()
+
 
 class Introduction(models.Model):
     statuses = [

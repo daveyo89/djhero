@@ -9,12 +9,18 @@
 
 {% block content %}
 <div class="container">
-    {% for post in posts %}
+    {% if is_paginated %}
+        {% bootstrap_pagination posts url="?page=" size="large" %}
+    {% endif %}
+    {% for post in page_obj %}
     <div class="category_cards_background">
 
-    <div class="row">
+        <div class="row">
             <div class="col-md-4 blog_card_image ">
-                <img class="flex-auto img-fluid d-none d-md-block" src="{{ post.image.url }}" alt="..." onerror=this.src="https://res.cloudinary.com/hxrgp5vol/image/upload/v1611772110/samples/landscapes/nature-mountains.jpg">
+                <a href="{% url 'post-detail' post.slug %}">
+                    <img class="flex-auto img-fluid d-none d-md-block" src="{{ post.image.url }}" alt="..."
+                         onerror=this.src="https://res.cloudinary.com/hxrgp5vol/image/upload/v1611772110/samples/landscapes/nature-mountains.jpg">
+                </a>
             </div>
             <div class="card col-md-8 blog_card">
                 <div class="card-body">
@@ -24,8 +30,8 @@
                     <p class="mb-1 text-muted">{{ post.date }}</p>
                     <a href="{% url 'post-detail' post.slug %}">Continue reading</a>
                 </div>
+            </div>
         </div>
-    </div>
     </div>
 
     {% endfor %}
