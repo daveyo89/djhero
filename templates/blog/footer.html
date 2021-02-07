@@ -1,6 +1,10 @@
 <footer class="container" style="color:whitesmoke !important;">
     <p>
         <a href="#">Back to top</a>
+        {% if post %}
+            <hr>
+            <a href="{% url 'category' post.category.slug %}">Back to {{ post.category }}</a>
+        {% endif %}
     </p>
     <p>© 2021 Morgenstern Bros. All rights reserved.</p>
 </footer>

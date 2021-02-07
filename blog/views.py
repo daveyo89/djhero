@@ -57,7 +57,7 @@ class CategoryView(ListView):
 
     def get_queryset(self):
         category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
-        return Post.objects.filter(category=category).order_by('-date')
+        return Post.objects.filter(status='P', category=category).order_by('-date')
 
 
 class PostListView(ListView):
@@ -70,7 +70,7 @@ class PostListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
 
-        context['categories'] = Category.objects.annotate(post_count=Count('post'))
+        context['categories'] = Category.objects.filter(post__status='P').annotate(post_count=Count('post'))
 
         paginator = Paginator(self.queryset, self.paginate_by)
         page = self.request.GET.get('page')
