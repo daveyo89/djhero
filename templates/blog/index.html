@@ -6,13 +6,38 @@
 <link rel="stylesheet" type="text/css" href="{% static 'blog/css/index.css' %}">
 {% endblock %}
 {% block content %}
+{% if user.is_authenticated %}
 <div class="cover-container d-flex h-100 p-3 mx-auto flex-column introduction">
     <main role="main" class="inner cover">
         <h1 class="cover-heading">{{ intro.0.title|default:'Welcome' }}</h1>
+        <h2>{{ user.username }}</h2>
         <p class="lead">{{ message|default:'' }}</p>
         <p class="lead">
             <a href="{% url 'blog' %}" class="btn btn-lg btn-secondary">Enter</a>
         </p>
     </main>
+    <div class="row">
+            <!-- Add from here -->
+        {% for ass in backends.associated %}
+          {% if ass.provider == 'facebook' %}
+            <div class="col-md-6 text-center">
+                <img src="{{ass.extra_data.picture.data.url}}" alt="" width="150" height="150" style="border-radius: 50%">
+            </div>
+            <div class="col-md-6 social-container my-2">                 <p> Signed in via:  {{ ass.provider }} </p>
+                <p> Name:  {{ ass.extra_data.name }} </p>
+                <p> Provider url: <a href="{{ass.extra_data.profile_url}}">link</a></p>
+            </div>
+          {% endif %}
+        {% endfor %}
+        <div class="col-sm-12 mt-2 text-center">
+          <button class="btn btn-danger">
+            <a href="{% url 'logout' %}">Logout</a>
+          </button>
+        </div>
+            <!-- End here -->
+      </div>
 </div>
+{% else %}
+{% include 'blog/login.html' %}
+{% endif %}
 {% endblock %}
