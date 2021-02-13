@@ -7,10 +7,11 @@
 {% endblock %}
 {% block content %}
 {% if user.is_authenticated %}
-<div class="cover-container d-flex h-100 p-3 mx-auto flex-column introduction">
+{% for ass in backends.associated %}
+<div class="cover-container d-flex h-80 p-3 mx-auto flex-column introduction">
     <main role="main" class="inner cover">
         <h1 class="cover-heading">{{ intro.0.title|default:'Welcome' }}</h1>
-        <h2>{{ user.username }}</h2>
+        <h2>Hello {{ ass.extra_data.name }}</h2>
         <p class="lead">{{ message|default:'' }}</p>
         <p class="lead">
             <a href="{% url 'blog' %}" class="btn btn-lg btn-secondary">Enter</a>
@@ -18,7 +19,7 @@
     </main>
     <div class="row">
             <!-- Add from here -->
-        {% for ass in backends.associated %}
+
           {% if ass.provider == 'facebook' %}
             <div class="col-md-6 text-center">
                 <img src="{{ass.extra_data.picture.data.url}}" alt="" width="150" height="150" style="border-radius: 50%">
@@ -34,7 +35,6 @@
             <a href="{% url 'logout' %}">Logout</a>
           </button>
         </div>
-            <!-- End here -->
       </div>
 </div>
 {% else %}

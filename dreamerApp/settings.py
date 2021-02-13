@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'rest_framework',
     'social_django',
+    'taggit',
 ]
 
 MIDDLEWARE = [
