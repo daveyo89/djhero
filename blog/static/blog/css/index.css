@@ -3,33 +3,43 @@ body {
 }
 
 .introduction {
-    color:whitesmoke !important;
+    margin-top: 5vh;
+    color: whitesmoke !important;
+}
+
+h1 {
+    mix-blend-mode: difference;
 }
 
 img {
-  border: 3px solid #282c34;
+    border: 3px solid #282c34;
 }
+
 .container-fluid {
-  height: 100vh;
-  background-color: #282c34;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    height: 100vh;
+    background-color: #282c34;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
+
 .container-fluid > div {
-  width: 85%;
-  min-width: 300px;
-  max-width: 500px;
+    width: 85%;
+    min-width: 300px;
+    max-width: 500px;
 }
+
 .card {
-  width: 100%;
+    width: 100%;
 }
+
 .social-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
+
 .btn a, .btn a:hover {
-  color: white;
-  text-decoration: none ;
+    color: white;
+    text-decoration: none;
 }
