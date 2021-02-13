@@ -10,7 +10,7 @@
 {% block content %}
 <div class="container">
     {% if is_paginated %}
-        {% bootstrap_pagination posts url="?page=" size="large" %}
+        {% bootstrap_pagination page_obj url="?page=" size="large" %}
     {% endif %}
     {% for post in page_obj %}
     <div class="category_cards_background">

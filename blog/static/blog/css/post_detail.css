@@ -2,3 +2,9 @@
     width: 100%;
     height: 220px;
 }
+
+.fixed-side {
+    position: sticky;
+    top: 14vh;
+}
+

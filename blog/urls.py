@@ -1,10 +1,11 @@
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from blog.views import Home, SearchView, CategoryView, PostListView, PostDetailView, PhotoDetailView, PostListRest, PostDetailRest, login
+from blog.views import Home, SearchView, CategoryView, PostListView, PostDetailView, PhotoDetailView, PostListRest, PostDetailRest, login, TagIndexView
 
 urlpatterns = [
     path('search', SearchView.as_view(), name='search'),
     path('category/<slug:slug>', CategoryView.as_view(), name='category'),
+    path('tags/<slug:slug>', TagIndexView.as_view(), name='tagged'),
 
     path('', Home.as_view(), name='index'),
     path('login/', login, name='login'),

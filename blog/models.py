@@ -5,6 +5,8 @@ from django.utils.text import slugify
 from tinymce import models as tinymce_models
 from django.contrib.auth.models import User
 from cloudinary.models import CloudinaryField
+from taggit.managers import TaggableManager
+from taggit.models import Tag
 
 
 class Category(models.Model):
@@ -40,6 +42,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     date = models.DateField(auto_now=True)
     image = CloudinaryField('image')
+    tags = TaggableManager(verbose_name='Tags', blank=True)
 
     """ Informative name for model """
 
@@ -64,6 +67,9 @@ class Post(models.Model):
         soup = BeautifulSoup(self.content, features="html.parser")
         text = soup.get_text()
         return text
+
+    def _tags(self):
+        return [t for t in self.tags.all()]
 
     class Meta:
         ordering = ["-date"]

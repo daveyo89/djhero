@@ -6,3 +6,10 @@ body {
     background-attachment: fixed;
     background-position: center;
 }
+
+nav {
+    max-height: 10vh;
+}
+img {
+    max-width: 100%;
+}

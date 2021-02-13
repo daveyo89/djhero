@@ -1,6 +1,6 @@
 from django.views.generic import ListView, DetailView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from blog.models import Category, Post, PostImage, PostVideo, Introduction
+from blog.models import Category, Post, PostImage, PostVideo, Introduction, Tag, TaggableManager
 from blog.serializers import PostSerializer
 from rest_framework import generics
 from django.db.models import Count
@@ -100,11 +100,40 @@ class PostDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         post = self.get_object()
+        context['tags'] = post._tags()
         context['previous_post'] = Post.objects.filter(id__lt=post.id, category=post.category).order_by('-id').first()
         context['next_post'] = Post.objects.filter(id__gt=post.id, category=post.category).order_by('id').first()
         context['photos'] = PostImage.objects.filter(post=post)
         context['videos'] = PostVideo.objects.filter(post=post)
         return context
+
+
+class TagIndexView(LoginRequiredMixin, ListView):
+    template_name = 'blog/category.html'
+    model = Post
+    context_object_name = 'tags'
+
+    paginate_by = 6
+    queryset = Post.objects.get_queryset()
+
+    def get_queryset(self):
+        return Post.objects.filter(tags__slug=self.kwargs.get('slug'))
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(TagIndexView, self).get_context_data()
+        paginator = Paginator(self.queryset, self.paginate_by)
+        page = self.request.GET.get('page')
+
+        try:
+            posts = paginator.page(page)
+        except PageNotAnInteger:
+            posts = paginator.page(1)
+        except EmptyPage:
+            posts = paginator.page(paginator.num_pages)
+        context['posts'] = posts
+        return context
+
+
 
 
 class PhotoDetailView(LoginRequiredMixin, DetailView):

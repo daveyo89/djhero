@@ -25,6 +25,7 @@
                     </div>
                 </div>
                 <aside class="col-md-4 blog-sidebar">
+                    <div class="fixed-side">
                     <img class="img-thumbnail post_detail_thumbnail" src="{{ post.image.url }}" alt="" onerror=this.src="https://res.cloudinary.com/hxrgp5vol/image/upload/v1611772103/samples/bike.jpg"
                          id="cover-image"/>
                     <hr>
@@ -45,6 +46,13 @@
                         <a href="{% url 'category' post.category.slug %}" class="btn btn-primary btn-block" role="button" aria-pressed="true">Back to {{ post.category }}</a>
                         <a href="{% url 'blog' %}" class="btn btn-secondary btn-block" role="button" aria-pressed="true">Back to All</a>
                     </div>
+
+                    <div class="p-3 mb-3 bg-light rounded">
+                        {% for tag in tags %}
+                            <a href="{% url 'tagged' tag.slug %}" class="text-dark btn" role="button" aria-pressed="true">#{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+                        </div>
                 </aside>
 
             </div>
