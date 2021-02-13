@@ -4,6 +4,12 @@ from blog.models import Category, Post, PostImage, PostVideo, Introduction
 from blog.serializers import PostSerializer
 from rest_framework import generics
 from django.db.models import Count
+from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+def login(request):
+    return render(request, 'blog/index.html')
 
 
 class Home(ListView):
@@ -19,7 +25,7 @@ class Home(ListView):
         return context
 
 
-class SearchView(ListView):
+class SearchView(LoginRequiredMixin, ListView):
     model = Post
     context_object_name = "posts"
     template_name = "blog/search.html"
@@ -34,7 +40,7 @@ class SearchView(ListView):
         return queryset
 
 
-class CategoryView(ListView):
+class CategoryView(LoginRequiredMixin, ListView):
     model = Category
     context_object_name = "posts"
     paginate_by = 10
@@ -60,7 +66,7 @@ class CategoryView(ListView):
         return Post.objects.filter(status='P', category=category).order_by('-date')
 
 
-class PostListView(ListView):
+class PostListView(LoginRequiredMixin, ListView):
     model = Post
     context_object_name = "posts"
     template_name = "blog/blog.html"
@@ -85,7 +91,7 @@ class PostListView(ListView):
         return context
 
 
-class PostDetailView(DetailView):
+class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
     context_object_name = "post"
     template_name = "blog/post_detail.html"
@@ -101,7 +107,7 @@ class PostDetailView(DetailView):
         return context
 
 
-class PhotoDetailView(DetailView):
+class PhotoDetailView(LoginRequiredMixin, DetailView):
     model = PostImage
     context_object_name = "photo"
     template_name = "blog/photo_detail.html"
