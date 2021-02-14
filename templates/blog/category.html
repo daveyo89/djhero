@@ -24,7 +24,7 @@
             </div>
             <div class="card col-md-8 blog_card">
                 <div class="card-body">
-                    <h5 class="card-title">{{ post.title }}</h5>
+                    <a href="{% url 'post-detail' post.slug %}"><h5 class="card-title">{{ post.title }}</h5></a>
                     <p class="card-text">{{ post.html_to_text }}</p>
                     <p class="card-text"><small class="text-muted">{{ post.author.get_full_name }}</small></p>
                     <p class="mb-1 text-muted">{{ post.date }}</p>

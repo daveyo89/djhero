@@ -14,8 +14,7 @@
     overscroll-behavior-y: auto;
 }
 .card p, h5 {
-    color: whitesmoke;
-    mix-blend-mode: difference;
+    color: black;
 }
 
 .category_cards_background {
