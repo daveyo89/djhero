@@ -1,4 +1,5 @@
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from blog.models import Category, Post, PostImage, PostVideo, Introduction, Tag, TaggableManager
 from blog.serializers import PostSerializer
@@ -8,11 +9,11 @@ from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
-def login(request):
-    return render(request, 'blog/index.html')
+class Login(LoginView):
+    template_name = 'blog/login.html'
 
 
-class Home(ListView):
+class Home(LoginRequiredMixin, ListView):
     model = Introduction
     template_name = 'blog/index.html'
 
@@ -132,8 +133,6 @@ class TagIndexView(LoginRequiredMixin, ListView):
             posts = paginator.page(paginator.num_pages)
         context['posts'] = posts
         return context
-
-
 
 
 class PhotoDetailView(LoginRequiredMixin, DetailView):
