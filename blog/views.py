@@ -1,16 +1,35 @@
-from django.views.generic import ListView, DetailView
+from django.contrib.auth import login, authenticate
+from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
+from django.views.generic import ListView, DetailView, CreateView
 from django.contrib.auth.views import LoginView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from blog.models import Category, Post, PostImage, PostVideo, Introduction, Tag, TaggableManager
 from blog.serializers import PostSerializer
 from rest_framework import generics
 from django.db.models import Count
-from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import UserRegisterForm
 
 
-class Login(LoginView):
+class Login(SuccessMessageMixin, LoginView):
     template_name = 'blog/login.html'
+    success_message = 'Login successful!'
+
+
+class SignUpView(SuccessMessageMixin, CreateView):
+    template_name = 'blog/register.html'
+    success_url = reverse_lazy('index')
+    form_class = UserRegisterForm
+    success_message = "Your profile was created successfully"
+
+    def form_valid(self, form):
+        user = form.save()
+        user = authenticate(email=form.cleaned_data['email'], password=form.cleaned_data['password1'], )
+        login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+        return HttpResponseRedirect(reverse('index'))
+
 
 
 class Home(LoginRequiredMixin, ListView):
@@ -157,4 +176,3 @@ class PostDetailRest(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'slug'
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-

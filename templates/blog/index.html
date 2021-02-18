@@ -7,9 +7,20 @@
 {% endblock %}
 {% block content %}
 <div class="cover-container d-flex h-80 p-3 mx-auto flex-column introduction">
+{% for message in messages %}
+<div style="align-self: center"  class="alert {{ message.tags }} alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    {{ message | safe }}
+</div>
+{% endfor %}
+                <div class="mt-5 pb-5"></div>
+
     <main role="main" class="inner cover">
-        <h1 class="cover-heading">{{ intro.0.title|default:'Welcome' }}</h1>
-        <h2>Hello</h2>
+                <h2>Hello {{ request.user.username }}</h2>
+
+        <h1 class="cover-heading">{{ intro.0.title|default:'Welcome' }} </h1>
         <p class="lead">{{ message|default:'' }}</p>
         <p class="lead">
             <a href="{% url 'blog' %}" class="btn btn-lg btn-secondary">Enter</a>
@@ -23,4 +34,6 @@
         </div>
       </div>
 </div>
+            <div class="mt-5 pb-5"></div>
+
 {% endblock %}

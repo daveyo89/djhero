@@ -2,24 +2,14 @@
 {% load static %}
 {% load bootstrap4 %}
 {% block extra_head %}
-<link rel="stylesheet" type="text/css" href="{% static 'blog/css/index.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'blog/css/login.css' %}">
 {% endblock %}
 {% block content %}
-<style>
-
-
-</style>
-<div class="container">
-    <div class="row">
-
-        <div class="col col-8  mx-auto">
             <div class="mt-5 pb-5"></div>
             <div class="card">
                 <div class="card-body">
                     <h1 class="h4">Sign In</h1>
                     <hr>
-                    <div class="row">
-                        <div class="col col-6">
                             <form class="login" method="POST" action="">
                                 {% csrf_token %}
                                 {% bootstrap_form form %}
@@ -35,20 +25,11 @@
                                             Forgot Password?</a>
                                     </div>
                                     <div class="col col-6 text-right">
-                                        <a href="#">Sign up</a>
+                                        <a href="{% url 'signup' %}">Sign up</a>
                                     </div>
                                 </div>
                             </form>
 
-                        </div>
-                    </div>
                 </div>
             </div>
-
-
-        </div>
-
-
-    </div>
-</div>
 {% endblock %}
