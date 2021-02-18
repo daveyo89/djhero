@@ -20,7 +20,7 @@
                     <hr>
                     <div class="row">
                         <div class="col col-6">
-                            <form class="login" method="POST" action="{% url 'login' %}">
+                            <form class="login" method="POST" action="">
                                 {% csrf_token %}
                                 {% bootstrap_form form %}
                                 {% if redirect_field_value %}
