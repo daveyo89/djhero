@@ -1,7 +1,7 @@
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.contrib.auth import views as auth_views
 from blog.views import Home, SearchView, CategoryView, PostListView, PostDetailView, PhotoDetailView, PostListRest, \
-    PostDetailRest, Login, TagIndexView, SignUpView
+    PostDetailRest, Login, TagIndexView, SignUpView, activate
 
 urlpatterns = [
     path('search', SearchView.as_view(), name='search'),
@@ -10,6 +10,7 @@ urlpatterns = [
 
     path('', Home.as_view(), name='index'),
     path('signup/', SignUpView.as_view(), name='signup'),
+    path('activate/<slug:uidb64>/<slug:token>/', activate, name='activate'),
     path('login/', Login.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 

@@ -8,10 +8,14 @@ services:
       - .:/app
     ports:
       - 80:80
+      - 587:587
+    expose:
+      - 587
     env_file:
         - ./.env
     depends_on:
       - db
+
 
   db:
     image: postgres:latest

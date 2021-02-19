@@ -5,6 +5,15 @@
 <link rel="stylesheet" type="text/css" href="{% static 'blog/css/login.css' %}">
 {% endblock %}
 {% block content %}
+{% for message in messages %}
+    <div style="align-self: center" onclick="this.style.visibility='hidden';"
+         class="alert {{ message.tags }} alert-dismissible" role="alert">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {{ message | safe }}
+    </div>
+    {% endfor %}
             <div class="mt-5 pb-5"></div>
             <div class="card">
                 <div class="card-body">

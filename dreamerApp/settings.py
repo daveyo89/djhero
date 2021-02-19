@@ -177,7 +177,14 @@ ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_UNIQUE_EMAIL = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = os.environ.get('GMAIL_EMAIL')
+DEFAULT_FROM_EMAIL = os.environ.get('GMAIL_EMAIL')
+EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
+EMAIL_PORT = 587
 
 TINYMCE_JS_URL = os.path.join(MEDIA_URL, "tinymce/js/tinymce/tinymce.min.js")
 TINYMCE_JS_ROOT = os.path.join(MEDIA_ROOT, "tinymce")
@@ -194,3 +201,4 @@ cloudinary.config(
     api_key=os.environ.get("API_KEY"),
     api_secret=os.environ.get("API_SECRET")
 )
+GOOGLE_RECAPTCHA_SECRET_KEY = os.environ.get('CAPTCHA_SECRET')

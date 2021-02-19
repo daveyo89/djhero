@@ -18,5 +18,4 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 WORKDIR /app
-
 #ENTRYPOINT ["/app/entrypoint_two.sh"]
