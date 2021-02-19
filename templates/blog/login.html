@@ -5,40 +5,31 @@
 <link rel="stylesheet" type="text/css" href="{% static 'blog/css/login.css' %}">
 {% endblock %}
 {% block content %}
-{% for message in messages %}
-    <div style="align-self: center" onclick="this.style.visibility='hidden';"
-         class="alert {{ message.tags }} alert-dismissible" role="alert">
-        <button type="button" class="close" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        {{ message | safe }}
-    </div>
-    {% endfor %}
-            <div class="mt-5 pb-5"></div>
-            <div class="card">
-                <div class="card-body">
-                    <h1 class="h4">Sign In</h1>
-                    <hr>
-                            <form class="login" method="POST" action="">
-                                {% csrf_token %}
-                                {% bootstrap_form form %}
-                                {% if redirect_field_value %}
-                                <input type="hidden" name="{{ redirect_field_name }}"
-                                       value="{{ redirect_field_value }}"/>
-                                {% endif %}
+<div class="mt-5 pb-5"></div>
+<div class="card">
+    <div class="card-body">
+        <h1 class="h4">Sign In</h1>
+        <hr>
+        <form class="login" method="POST" action="">
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            {% if redirect_field_value %}
+            <input type="hidden" name="{{ redirect_field_name }}"
+                   value="{{ redirect_field_value }}"/>
+            {% endif %}
 
-                                <button class="btn btn-primary btn-block" type="submit">Sign In</button>
-                                <div class="row mt-2">
-                                    <div class="col col-6">
-                                        <a class="button secondaryAction" href="{% url 'password_reset' %}">
-                                            Forgot Password?</a>
-                                    </div>
-                                    <div class="col col-6 text-right">
-                                        <a href="{% url 'signup' %}">Sign up</a>
-                                    </div>
-                                </div>
-                            </form>
-
+            <button class="btn btn-primary btn-block" type="submit">Sign In</button>
+            <div class="row mt-2">
+                <div class="col col-6">
+                    <a class="button secondaryAction" href="{% url 'password_reset' %}">
+                        Forgot Password?</a>
+                </div>
+                <div class="col col-6 text-right">
+                    <a href="{% url 'signup' %}">Sign up</a>
                 </div>
             </div>
+        </form>
+
+    </div>
+</div>
 {% endblock %}
