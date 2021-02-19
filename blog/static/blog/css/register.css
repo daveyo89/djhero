@@ -1,0 +1,8 @@
+body {
+    text-align: center;
+}
+
+.card {
+    margin: auto;
+    max-width: 40%;
+}
