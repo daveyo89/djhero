@@ -2,7 +2,7 @@ import json
 import os
 import urllib
 
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.contrib.messages.views import SuccessMessageMixin, messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
@@ -12,7 +12,8 @@ from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.views.generic import ListView, DetailView, CreateView
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
+    PasswordResetCompleteView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from blog.models import Category, Post, PostImage, PostVideo, Introduction, Tag, TaggableManager, CustomUser
 from blog.serializers import PostSerializer
@@ -23,22 +24,20 @@ from .forms import UserRegisterForm
 from .tokens import account_activation_token
 
 
-def activate(request, uidb64, token):
-    try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
-        user = CustomUser.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
-        user = None
-    if user is not None and account_activation_token.check_token(user, token):
-        user.is_active = True
-        user.save()
-        login(request, user)
-        messages.success(request, message='Successful activation!')
-        # return redirect('home')
-        return HttpResponseRedirect(reverse('index'))
-        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
-    else:
-        return HttpResponse('Activation link is invalid!')
+class PwResetCompleteView(PasswordResetCompleteView):
+    template_name = 'blog/registration/password_reset_complete.html'
+
+
+class PwResetConfirmView(PasswordResetConfirmView):
+    template_name = 'blog/registration/password_reset_confirm.html'
+
+
+class PwResetView(PasswordResetView):
+    template_name = 'blog/registration/password_reset_form.html'
+
+
+class PwResetDoneView(PasswordResetDoneView):
+    template_name = 'blog/registration/password_reset_done.html'
 
 
 class Login(SuccessMessageMixin, LoginView):
@@ -237,3 +236,21 @@ class PostDetailRest(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'slug'
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = CustomUser.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        messages.success(request, message='Successful activation!')
+        # return redirect('home')
+        return HttpResponseRedirect(reverse('index'))
+        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')
