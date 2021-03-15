@@ -100,7 +100,7 @@ class Home(LoginRequiredMixin, ListView):
         context = super().get_context_data()
         context["intro"] = Introduction.objects.filter(status="A")
         if context["intro"]:
-            context['message'] = context['intro'][0].html_to_text()
+            context['message'] = context['intro'][0].get_message_as_markdown()
 
         return context
 
@@ -131,7 +131,7 @@ class CategoryView(LoginRequiredMixin, ListView):
         context = super(CategoryView, self).get_context_data()
         paginator = Paginator(self.queryset, self.paginate_by)
         page = self.request.GET.get('page')
-
+        context['category'] = self.category
         try:
             posts = paginator.page(page)
         except PageNotAnInteger:
@@ -142,8 +142,8 @@ class CategoryView(LoginRequiredMixin, ListView):
         return context
 
     def get_queryset(self):
-        category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
-        return Post.objects.filter(status='P', category=category).order_by('-date')
+        self.category = Category.objects.get(slug=self.request.resolver_match.kwargs.get('slug'))
+        return Post.objects.filter(status='P', category=self.category).order_by('-date')
 
 
 class PostListView(LoginRequiredMixin, ListView):

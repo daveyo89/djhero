@@ -21,7 +21,7 @@
 
                         <hr>
 
-                        {{ post.content|safe }}
+                        {{ post.get_message_as_markdown }}
                     </div>
                 </div>
                 <aside class="col-md-4 blog-sidebar">
