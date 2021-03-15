@@ -1,18 +1,98 @@
-from django.views.generic import ListView, DetailView
+import json
+import os
+import urllib
+
+from django.contrib.auth import login
+from django.contrib.messages.views import SuccessMessageMixin, messages
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import EmailMessage
+from django.http import HttpResponseRedirect, HttpResponse
+from django.template.loader import render_to_string
+from django.urls import reverse_lazy, reverse
+from django.utils.encoding import force_bytes, force_text
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
+    PasswordResetCompleteView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from blog.models import Category, Post, PostImage, PostVideo, Introduction, Tag, TaggableManager
+from blog.models import Category, Post, PostImage, PostVideo, Introduction, Tag, TaggableManager, CustomUser
 from blog.serializers import PostSerializer
 from rest_framework import generics
 from django.db.models import Count
-from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .forms import UserRegisterForm
+from .tokens import account_activation_token
 
 
-def login(request):
-    return render(request, 'blog/index.html')
+class PwResetCompleteView(PasswordResetCompleteView):
+    template_name = 'blog/registration/password_reset_complete.html'
 
 
-class Home(ListView):
+class PwResetConfirmView(PasswordResetConfirmView):
+    template_name = 'blog/registration/password_reset_confirm.html'
+
+
+class PwResetView(PasswordResetView):
+    template_name = 'blog/registration/password_reset_form.html'
+
+
+class PwResetDoneView(PasswordResetDoneView):
+    template_name = 'blog/registration/password_reset_done.html'
+
+
+class Login(SuccessMessageMixin, LoginView):
+    template_name = 'blog/login.html'
+    success_message = 'Login successful!'
+
+
+class SignUpView(SuccessMessageMixin, CreateView):
+    template_name = 'blog/register.html'
+    success_url = reverse_lazy('index')
+    form_class = UserRegisterForm
+    success_message = 'Your profile was created successfully'
+    extra_context = {'google_site_key': os.environ.get('CAPTCHA_SITE')}
+
+    def form_valid(self, form):
+        """ Begin reCAPTCHA validation """
+        recaptcha_response = self.request.POST.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        values = {
+            'secret': os.environ.get('CAPTCHA_SECRET'),
+            'response': recaptcha_response
+        }
+        data = urllib.parse.urlencode(values).encode()
+        req = urllib.request.Request(url, data=data)
+        response = urllib.request.urlopen(req)
+        result = json.loads(response.read().decode())
+        """ End reCAPTCHA validation """
+        if result['success']:
+            user = form.save(commit=False)
+            user.is_active = False
+            user.save()
+            current_site = get_current_site(self.request)
+            mail_subject = f'Activate your account at {current_site.name}.'
+            message = render_to_string('blog/acc_activate_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            to_email = form.cleaned_data.get('email')
+            email = EmailMessage(
+                mail_subject, message, to=[to_email]
+            )
+            email.send()
+            messages.success(self.request, message='Please confirm your email address to complete the registration!')
+
+            # user = authenticate(email=form.cleaned_data['email'], password=form.cleaned_data['password1'], )
+            # login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+            return HttpResponseRedirect(reverse('login'))
+        else:
+            messages.error(self.request, 'Invalid reCAPTCHA. Please try again.')
+            return HttpResponseRedirect(reverse('signup'))
+
+
+class Home(LoginRequiredMixin, ListView):
     model = Introduction
     template_name = 'blog/index.html'
 
@@ -134,8 +214,6 @@ class TagIndexView(LoginRequiredMixin, ListView):
         return context
 
 
-
-
 class PhotoDetailView(LoginRequiredMixin, DetailView):
     model = PostImage
     context_object_name = "photo"
@@ -159,3 +237,20 @@ class PostDetailRest(generics.RetrieveUpdateDestroyAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
+
+def activate(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = CustomUser.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
+        user = None
+    if user is not None and account_activation_token.check_token(user, token):
+        user.is_active = True
+        user.save()
+        login(request, user)
+        messages.success(request, message='Successful activation!')
+        # return redirect('home')
+        return HttpResponseRedirect(reverse('index'))
+        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
+    else:
+        return HttpResponse('Activation link is invalid!')

@@ -6,7 +6,7 @@ ENV PYTHONUNBUFFERED 1
 
 # install psycopg2 dependencies
 RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev jpeg-dev zlib-dev tiff-dev libjpeg-turbo-dev libffi-dev openssl-dev
+    && apk add postgresql-dev gcc cargo python3-dev musl-dev jpeg-dev zlib-dev tiff-dev libjpeg-turbo-dev libffi-dev openssl-dev
 # lint
 
 # install dependencies
@@ -18,5 +18,4 @@ RUN pip install -r requirements.txt
 COPY . /app
 
 WORKDIR /app
-
 #ENTRYPOINT ["/app/entrypoint_two.sh"]
