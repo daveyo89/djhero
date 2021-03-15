@@ -26,10 +26,12 @@ class CustomUserAdmin(UserAdmin):
 
 class PostImageAdmin(admin.StackedInline):
     model = PostImage
+    extra = 1
 
 
 class PostVideoAdmin(admin.StackedInline):
     model = PostVideo
+    extra = 1
 
 
 class PostAdmin(admin.ModelAdmin):

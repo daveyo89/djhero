@@ -8,32 +8,46 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-    {% if is_paginated %}
-        {% bootstrap_pagination page_obj url="?page=" size="large" %}
-    {% endif %}
-    {% for post in page_obj %}
-    <div class="category_cards_background">
+<div class="jumbotron">
 
-        <div class="row">
-            <div class="col-md-4 blog_card_image ">
-                <a href="{% url 'post-detail' post.slug %}">
-                    <img class="flex-auto img-fluid d-none d-md-block" src="{{ post.image.url }}" alt="..."
-                         onerror=this.src="https://res.cloudinary.com/hxrgp5vol/image/upload/v1611772110/samples/landscapes/nature-mountains.jpg">
-                </a>
+    <div class="container">
+        <div class="jumbotron p-3 p-md-5 text-white rounded bg-dark row category_image"
+             {% if category.image.url %}
+             style="background-image: url('{{category.image.url}}');"
+             {% else %}
+             style="background-image: url('/static/blog/cover.jpg');"
+             {% endif %}>
+            <div class="col-md-6 px-0">
+                <h3 class="display-4 font-italic">{{ category.name|default:"All Posts" }}</h3>
+                <p class="lead my-3">{{ category.description|default:"" }}</p>
+
             </div>
-            <div class="card col-md-8 blog_card">
-                <div class="card-body">
-                    <a href="{% url 'post-detail' post.slug %}"><h5 class="card-title">{{ post.title }}</h5></a>
-                    <p class="card-text">{{ post.html_to_text }}</p>
-                    <p class="card-text"><small class="text-muted">{{ post.author.get_full_name }}</small></p>
-                    <p class="mb-1 text-muted">{{ post.date }}</p>
-                    <a href="{% url 'post-detail' post.slug %}">Continue reading</a>
+        </div>
+        {% if is_paginated %}
+        {% bootstrap_pagination page_obj url="?page=" size="large" %}
+        {% endif %}
+        {% for post in page_obj %}
+        <div class="category_cards_background">
+
+            <div class="row">
+                <div class="col-md-4 blog_card_image ">
+                    <a href="{% url 'post-detail' post.slug %}">
+                        <img class="flex-auto img-fluid d-none d-md-block" src="{{ post.image.url }}" alt="..."
+                             onerror=this.src="https://res.cloudinary.com/hxrgp5vol/image/upload/v1611772110/samples/landscapes/nature-mountains.jpg">
+                    </a>
+                </div>
+                <div class="card col-md-8 blog_card">
+                    <div class="card-body">
+                        <a href="{% url 'post-detail' post.slug %}"><h5 class="card-title">{{ post.title }}</h5></a>
+                        <p class="card-text">{{ post.get_message_as_markdown }}</p>
+                        <p class="card-text"><small class="text-muted">by {{ post.author.username }}</small></p>
+                        <p class="mb-1 text-muted">{{ post.date }}</p>
+                        <a href="{% url 'post-detail' post.slug %}">Continue reading</a>
+                    </div>
                 </div>
             </div>
         </div>
+        {% endfor %}
     </div>
-
-    {% endfor %}
 </div>
 {% endblock %}

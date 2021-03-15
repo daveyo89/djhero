@@ -3,6 +3,9 @@
     height: 222px;
     max-height: 222px
 }
+.card {
+    overflow: hidden;
+}
 
 .blog_card_image {
     width: 200px;

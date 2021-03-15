@@ -2,7 +2,9 @@ from bs4 import BeautifulSoup
 from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
-from tinymce import models as tinymce_models
+from mdeditor.fields import MDTextField
+from django.utils.html import mark_safe
+from markdown import markdown
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from cloudinary.models import CloudinaryField
 from taggit.managers import TaggableManager
@@ -83,7 +85,7 @@ class Post(models.Model):
     ]
     title = models.CharField(max_length=120, blank=True)
     slug = models.CharField(max_length=60, unique=True, blank=True)
-    content = tinymce_models.HTMLField()
+    content = MDTextField()
     status = models.CharField(max_length=1, choices=statuses)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     author = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
@@ -91,6 +93,8 @@ class Post(models.Model):
     image = CloudinaryField('image')
     tags = TaggableManager(verbose_name='Tags', blank=True)
 
+    def get_message_as_markdown(self):
+        return mark_safe(markdown(self.content, safe_mode='escape'))
     """ Informative name for model """
 
     def __unicode__(self):
@@ -150,7 +154,7 @@ class Introduction(models.Model):
         ('I', 'In Active')
     ]
     title = models.CharField(max_length=120)
-    message = tinymce_models.HTMLField()
+    message = MDTextField()
     status = models.CharField(max_length=1, choices=statuses, default='I')
 
     def __str__(self):
@@ -160,3 +164,6 @@ class Introduction(models.Model):
         soup = BeautifulSoup(self.message, features="html.parser")
         text = " ".join(soup.find_all(text=True))
         return text
+
+    def get_message_as_markdown(self):
+        return mark_safe(markdown(self.message, safe_mode='escape'))
