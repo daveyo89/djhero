@@ -2,7 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from blog.views import Home, SearchView, CategoryView, PostListView, PostDetailView, PhotoDetailView, PostListRest, \
     PostDetailRest, Login, TagIndexView, SignUpView, PwResetView, activate, PwResetDoneView, PwResetConfirmView, \
-    PwResetCompleteView
+    PwResetCompleteView, resend_activation, ResendActivaton
 
 urlpatterns = [
     path('search', SearchView.as_view(), name='search'),
@@ -12,6 +12,10 @@ urlpatterns = [
     path('', Home.as_view(), name='index'),
     path('signup/', SignUpView.as_view(), name='signup'),
     path('activate/<slug:uidb64>/<slug:token>/', activate, name='activate'),
+
+    path('reactivate/', resend_activation, name='reactivate'),
+    path('reactivation_succesful/', ResendActivaton.as_view(), name='reactivation_successful'),
+
     path('login/', Login.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 

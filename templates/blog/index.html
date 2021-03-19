@@ -13,10 +13,19 @@
         <h2>Hello {{ request.user.username|default:request.user.email }}</h2>
 
         <h1 class="cover-heading">{{ intro.0.title|default:'Welcome' }} </h1>
-        <p class="lead">{{ message|default:'' }}</p>
-        <p class="lead">
-            <a href="{% url 'blog' %}" class="btn btn-lg btn-secondary">Enter</a>
-        </p>
+        {% if not user.is_active %}
+        <p>Please activate your account.</p>
+        <p>For the activation link please check your emails or press the button below to get a new one.</p>
+            <p class="lead">
+                <a href="{% url 'reactivate' %}" class="btn btn-lg btn-secondary">Resend Activation Link</a>
+            </p>
+        {% else %}
+            <p class="lead">{{ message|default:'' }}</p>
+            <p class="lead">
+                <a href="{% url 'blog' %}" class="btn btn-lg btn-secondary">Enter</a>
+            </p>
+        {% endif %}
+
     </main>
     <div class="row">
         <div class="col-sm-12 mt-2 text-center">
