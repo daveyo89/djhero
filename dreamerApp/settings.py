@@ -16,6 +16,7 @@ import cloudinary.uploader
 import cloudinary.api
 
 from pathlib import Path
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -81,6 +82,7 @@ WSGI_APPLICATION = 'dreamerApp.wsgi.application'
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 try:
     from django.contrib.messages import constants as messages
+
     MESSAGE_TAGS = {
         messages.DEBUG: 'alert-info',
         messages.INFO: 'alert-info',
@@ -125,9 +127,8 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
+    'blog.backends.CustomModelBackend',
 ]
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
@@ -141,7 +142,6 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
@@ -164,7 +164,6 @@ CLOUDINARY_STORAGE = {
 }
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
-
 # Login/Logout Redirect urls
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'blog'
@@ -186,34 +185,34 @@ DEFAULT_FROM_EMAIL = os.environ.get('GMAIL_EMAIL')
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 EMAIL_PORT = 587
 
-
 MDEDITOR_CONFIGS = {
-'default':{
-    'width': '100% ',  # Custom edit box width
-    'heigth': 500,  # Custom edit box height
-    'toolbar': ["undo", "redo", "|",
-                "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|",
-                "h1", "h2", "h3", "h4", "h5", "h6", "|",
-                "list-ul", "list-ol", "hr", "|",
-                "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime"
-                "emoji", "html-entities", "pagebreak", "goto-line", "|",
-                "help", "info",
-                "||", "preview", "watch", "fullscreen"],  # custom edit box toolbar
-    'upload_image_formats': ["jpg", "jpeg", "gif", "png", "bmp", "webp"],  # image upload format type
-    'image_folder': 'editor',  # image save the folder name
-    'theme': 'default',  # edit box theme, dark / default
-    'preview_theme': 'default',  # Preview area theme, dark / default
-    'editor_theme': 'default',  # edit area theme, pastel-on-dark / default
-    'toolbar_autofixed': True,  # Whether the toolbar capitals
-    'search_replace': True,  # Whether to open the search for replacement
-    'emoji': True,  # whether to open the expression function
-    'tex': True,  # whether to open the tex chart function
-    'flow_chart': True,  # whether to open the flow chart function
-    'sequence': True, # Whether to open the sequence diagram function
-    'watch': True,  # Live preview
-    'lineWrapping': False,  # lineWrapping
-    'lineNumbers': False,  # lineNumbers
-    'language': 'en'  # zh / en / es
+    'default': {
+        'width': '100% ',  # Custom edit box width
+        'heigth': 500,  # Custom edit box height
+        'toolbar': ["undo", "redo", "|",
+                    "bold", "del", "italic", "quote", "ucwords", "uppercase", "lowercase", "|",
+                    "h1", "h2", "h3", "h4", "h5", "h6", "|",
+                    "list-ul", "list-ol", "hr", "|",
+                    "link", "reference-link", "image", "code", "preformatted-text", "code-block", "table", "datetime"
+                                                                                                           "emoji",
+                    "html-entities", "pagebreak", "goto-line", "|",
+                    "help", "info",
+                    "||", "preview", "watch", "fullscreen"],  # custom edit box toolbar
+        'upload_image_formats': ["jpg", "jpeg", "gif", "png", "bmp", "webp"],  # image upload format type
+        'image_folder': 'editor',  # image save the folder name
+        'theme': 'default',  # edit box theme, dark / default
+        'preview_theme': 'default',  # Preview area theme, dark / default
+        'editor_theme': 'default',  # edit area theme, pastel-on-dark / default
+        'toolbar_autofixed': True,  # Whether the toolbar capitals
+        'search_replace': True,  # Whether to open the search for replacement
+        'emoji': True,  # whether to open the expression function
+        'tex': True,  # whether to open the tex chart function
+        'flow_chart': True,  # whether to open the flow chart function
+        'sequence': True,  # Whether to open the sequence diagram function
+        'watch': True,  # Live preview
+        'lineWrapping': False,  # lineWrapping
+        'lineNumbers': False,  # lineNumbers
+        'language': 'en'  # zh / en / es
     }
 }
 

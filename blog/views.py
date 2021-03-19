@@ -3,6 +3,7 @@ import os
 import urllib
 
 from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.messages.views import SuccessMessageMixin, messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
@@ -22,6 +23,7 @@ from django.db.models import Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import UserRegisterForm
 from .tokens import account_activation_token
+from django.utils.translation import gettext_lazy as _
 
 
 class PwResetCompleteView(PasswordResetCompleteView):
@@ -40,9 +42,20 @@ class PwResetDoneView(PasswordResetDoneView):
     template_name = 'blog/registration/password_reset_done.html'
 
 
+class CustomAuthenticationForm(AuthenticationForm):
+    error_messages = {
+        'invalid_login': _(
+            "Please enter a correct %(username)s and password. Note that both "
+            "fields may be case-sensitive."
+        ),
+        'inactive': _("This account is inactive, please check your emails."),
+    }
+
+
 class Login(SuccessMessageMixin, LoginView):
     template_name = 'blog/login.html'
     success_message = 'Login successful!'
+    authentication_form = CustomAuthenticationForm
 
 
 class SignUpView(SuccessMessageMixin, CreateView):
