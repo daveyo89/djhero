@@ -2,7 +2,7 @@ import json
 import os
 import urllib
 
-from django.contrib.auth import login
+from django.contrib.auth import login, get_user
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.messages.views import SuccessMessageMixin, messages
 from django.contrib.sites.shortcuts import get_current_site
@@ -21,9 +21,11 @@ from blog.serializers import PostSerializer
 from rest_framework import generics
 from django.db.models import Count
 from django.contrib.auth.mixins import LoginRequiredMixin
+from blog.mixins import ActiveRequiredMixin
 from .forms import UserRegisterForm
 from .tokens import account_activation_token
 from django.utils.translation import gettext_lazy as _
+from blog import signals
 
 
 class PwResetCompleteView(PasswordResetCompleteView):
@@ -42,6 +44,29 @@ class PwResetDoneView(PasswordResetDoneView):
     template_name = 'blog/registration/password_reset_done.html'
 
 
+class ResendActivaton(PasswordResetDoneView):
+    template_name = 'blog/registration/reactivation_link_sent.html'
+
+
+def resend_activation(request):
+    current_site = get_current_site(request)
+    user = get_user(request)
+    mail_subject = f'Activate your account at {current_site.name}.'
+    message = render_to_string('blog/acc_activate_email.html', {
+        'user': user,
+        'domain': current_site.domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token.make_token(user),
+    })
+    to_email = user.email
+    email = EmailMessage(
+        mail_subject, message, to=[to_email]
+    )
+    email.send()
+
+    return HttpResponseRedirect(reverse('reactivation_successful'))
+
+
 class CustomAuthenticationForm(AuthenticationForm):
     error_messages = {
         'invalid_login': _(
@@ -50,6 +75,10 @@ class CustomAuthenticationForm(AuthenticationForm):
         ),
         'inactive': _("This account is inactive, please check your emails."),
     }
+
+    def confirm_login_allowed(self, user):
+        if not user.is_active:
+            pass
 
 
 class Login(SuccessMessageMixin, LoginView):
@@ -118,7 +147,7 @@ class Home(LoginRequiredMixin, ListView):
         return context
 
 
-class SearchView(LoginRequiredMixin, ListView):
+class SearchView(ActiveRequiredMixin, ListView):
     model = Post
     context_object_name = "posts"
     template_name = "blog/search.html"
@@ -133,7 +162,7 @@ class SearchView(LoginRequiredMixin, ListView):
         return queryset
 
 
-class CategoryView(LoginRequiredMixin, ListView):
+class CategoryView(ActiveRequiredMixin, ListView):
     model = Category
     context_object_name = "posts"
     paginate_by = 10
@@ -159,7 +188,7 @@ class CategoryView(LoginRequiredMixin, ListView):
         return Post.objects.filter(status='P', category=self.category).order_by('-date')
 
 
-class PostListView(LoginRequiredMixin, ListView):
+class PostListView(ActiveRequiredMixin, ListView):
     model = Post
     context_object_name = "posts"
     template_name = "blog/blog.html"
@@ -184,7 +213,7 @@ class PostListView(LoginRequiredMixin, ListView):
         return context
 
 
-class PostDetailView(LoginRequiredMixin, DetailView):
+class PostDetailView(ActiveRequiredMixin, DetailView):
     model = Post
     context_object_name = "post"
     template_name = "blog/post_detail.html"
@@ -201,7 +230,7 @@ class PostDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class TagIndexView(LoginRequiredMixin, ListView):
+class TagIndexView(ActiveRequiredMixin, ListView):
     template_name = 'blog/category.html'
     model = Post
     context_object_name = 'tags'
@@ -227,7 +256,7 @@ class TagIndexView(LoginRequiredMixin, ListView):
         return context
 
 
-class PhotoDetailView(LoginRequiredMixin, DetailView):
+class PhotoDetailView(ActiveRequiredMixin, DetailView):
     model = PostImage
     context_object_name = "photo"
     template_name = "blog/photo_detail.html"
@@ -261,9 +290,10 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
+
         messages.success(request, message='Successful activation!')
-        # return redirect('home')
+        signals.user_activated.send(sender='activated_user', msg=f"Account for {user.email} has been activated!")
+
         return HttpResponseRedirect(reverse('index'))
-        # return HttpResponse('Thank you for your email confirmation. Now you can login your account.')
     else:
         return HttpResponse('Activation link is invalid!')
