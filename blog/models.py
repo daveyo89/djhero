@@ -1,15 +1,15 @@
 from bs4 import BeautifulSoup
+from cloudinary.models import CloudinaryField
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 from django.urls import reverse
-from django.utils.text import slugify
-from mdeditor.fields import MDTextField
 from django.utils.html import mark_safe
+from django.utils.text import slugify
+from django.utils.translation import ugettext_lazy as _
 from markdown import markdown
-from django.contrib.auth.models import AbstractUser, BaseUserManager
-from cloudinary.models import CloudinaryField
+from mdeditor.fields import MDTextField
 from taggit.managers import TaggableManager
 from taggit.models import Tag
-from django.utils.translation import ugettext_lazy as _
 
 
 class UserManager(BaseUserManager):
@@ -48,9 +48,9 @@ class UserManager(BaseUserManager):
 
 class CustomUser(AbstractUser):
     email = models.EmailField(_('email address'), unique=True)
-    username = models.CharField(max_length=50, blank=True, null=True, unique=True)
+    username = models.CharField(max_length=50, blank=False, null=False, unique=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username']
 
     objects = UserManager()
 

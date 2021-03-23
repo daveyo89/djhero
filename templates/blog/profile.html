@@ -1,0 +1,65 @@
+{% extends "blog/base.html" %}
+{% load cloudinary %}
+
+{% load static %}
+{% load bootstrap4 %}
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static 'blog/css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+<main role="main" class="container">
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-md-8">
+                <h2>Profile Info</h2>
+                <p>My basic information</p>
+                <table class="table table-dark">
+                    <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Last Online</th>
+                        <th>Active</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>{{ profile.username }}</td>
+                        <td>{{ profile.email }}</td>
+                        <td>{{ profile.last_login }}</td>
+                        <td>{{ profile.is_active|yesno:"Yes,No" }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+
+
+            </div>
+            <aside class="col-md-4 blog-sidebar">
+                <div class="fixed-side">
+                    <img class="img-thumbnail post_detail_thumbnail" src="{{ profile.image.url }}" alt=""
+                         onerror=this.src="https://res.cloudinary.com/hxrgp5vol/image/upload/v1611772103/samples/bike.jpg"
+                         id="cover-image"/>
+                    <hr>
+
+                    <div class="p-3 mb-3 bg-light rounded">
+                        {% if not user.is_active %}
+                                <p>In order to be able to read the blog, please activate your account.</p>
+                                <p>For the activation link please check your emails or press the button below to get a new one.</p>
+                                    <p class="lead">
+                                        <a href="{% url 'reactivate' %}" class="btn btn-lg btn-secondary">Resend Activation Link</a>
+                                </p>
+                        {% else %}
+                            <p class="lead">{{ message|default:'' }}</p>
+                            <p class="lead">
+                                <a href="{% url 'blog' %}" class="btn btn-lg btn-secondary">Enter</a>
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+</main>
+{% endblock %}

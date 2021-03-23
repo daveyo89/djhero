@@ -31,7 +31,11 @@
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'blog' %}">Blog</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link my-2 my-lg-0" href="{% url 'profile' %}">Me</a>
+            </li>
         </ul>
+
         <form method="GET" action="{% url 'search' %}" class="form-inline my-2 my-lg-0">
             {% csrf_token %}
             <input name="query" class="form-control mr-sm-2" type="text" placeholder="Search"
