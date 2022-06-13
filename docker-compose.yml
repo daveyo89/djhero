@@ -3,12 +3,16 @@ version: '3.7'
 services:
   web:
     build: .
-    command: python manage.py runserver 0.0.0.0:80
+    command: sh -c "
+        python manage.py collectstatic --noinput
+        && python manage.py migrate
+        && python manage.py runserver 0.0.0.0:8000
+      "
     volumes:
       - .:/app
     ports:
-      - 80:80
-      - 587:587
+      - "8000:8000"
+      - "587:587"
     expose:
       - 587
     env_file:
@@ -16,16 +20,16 @@ services:
     depends_on:
       - db
 
-
   db:
-    image: postgres:latest
+    image: postgres:14.3-bullseye
     restart: always
     environment:
       POSTGRES_PASSWORD: hello_django
       POSTGRES_USER: hello_django
-      POSTGRES_DB: hello_django_prod
+      POSTGRES_DB: hello_django
     volumes:
-      - pgdata:/var/lib/postgresql/data/
-
+      - dj_hero_vol:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
 volumes:
-  pgdata:
+  dj_hero_vol:

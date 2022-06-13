@@ -210,8 +210,8 @@ class PostDetailView(ActiveRequiredMixin, DetailView):
         context = super().get_context_data()
         post = self.get_object()
         context['tags'] = post._tags()
-        context['previous_post'] = Post.objects.filter(id__lt=post.id, category=post.category).order_by('-id').first()
-        context['next_post'] = Post.objects.filter(id__gt=post.id, category=post.category).order_by('id').first()
+        context['previous_post'] = Post.objects.filter(id__lt=post.id, category=post.category, status='P').order_by('-id').first()
+        context['next_post'] = Post.objects.filter(id__gt=post.id, category=post.category, status='P').order_by('id').first()
         context['photos'] = PostImage.objects.filter(post=post)
         context['videos'] = PostVideo.objects.filter(post=post)
         return context
