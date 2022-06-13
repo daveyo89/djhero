@@ -1,5 +1,5 @@
-import requests
 import os
+import requests
 
 
 def telegram_bot_sendtext(bot_message):

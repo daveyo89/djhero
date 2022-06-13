@@ -4,28 +4,29 @@ import urllib
 
 from django.contrib.auth import login, get_user
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
+    PasswordResetCompleteView
 from django.contrib.messages.views import SuccessMessageMixin, messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Count
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.views.generic import ListView, DetailView, CreateView
-from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
-    PasswordResetCompleteView
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from blog.models import Category, Post, PostImage, PostVideo, Introduction, Tag, TaggableManager, CustomUser
-from blog.serializers import PostSerializer
+from django.utils.translation import gettext_lazy as _
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from rest_framework import generics
-from django.db.models import Count
-from django.contrib.auth.mixins import LoginRequiredMixin
-from blog.mixins import ActiveRequiredMixin
+
+from blog import signals
+from blog.mixins import ActiveRequiredMixin, ProfileObjectMixin
+from blog.models import Category, Post, PostImage, PostVideo, Introduction, CustomUser
+from blog.serializers import PostSerializer
 from .forms import UserRegisterForm
 from .tokens import account_activation_token
-from django.utils.translation import gettext_lazy as _
-from blog import signals
 
 
 class PwResetCompleteView(PasswordResetCompleteView):
@@ -46,25 +47,6 @@ class PwResetDoneView(PasswordResetDoneView):
 
 class ResendActivaton(PasswordResetDoneView):
     template_name = 'blog/registration/reactivation_link_sent.html'
-
-
-def resend_activation(request):
-    current_site = get_current_site(request)
-    user = get_user(request)
-    mail_subject = f'Activate your account at {current_site.name}.'
-    message = render_to_string('blog/acc_activate_email.html', {
-        'user': user,
-        'domain': current_site.domain,
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': account_activation_token.make_token(user),
-    })
-    to_email = user.email
-    email = EmailMessage(
-        mail_subject, message, to=[to_email]
-    )
-    email.send()
-
-    return HttpResponseRedirect(reverse('reactivation_successful'))
 
 
 class CustomAuthenticationForm(AuthenticationForm):
@@ -145,6 +127,11 @@ class Home(LoginRequiredMixin, ListView):
             context['message'] = context['intro'][0].get_message_as_markdown()
 
         return context
+
+
+class ProfileView(ProfileObjectMixin, LoginRequiredMixin, UpdateView):
+    template_name = 'blog/profile.html'
+    context_object_name = 'profile'
 
 
 class SearchView(ActiveRequiredMixin, ListView):
@@ -297,3 +284,22 @@ def activate(request, uidb64, token):
         return HttpResponseRedirect(reverse('index'))
     else:
         return HttpResponse('Activation link is invalid!')
+
+
+def resend_activation(request):
+    current_site = get_current_site(request)
+    user = get_user(request)
+    mail_subject = f'Activate your account at {current_site.name}.'
+    message = render_to_string('blog/acc_activate_email.html', {
+        'user': user,
+        'domain': current_site.domain,
+        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+        'token': account_activation_token.make_token(user),
+    })
+    to_email = user.email
+    email = EmailMessage(
+        mail_subject, message, to=[to_email]
+    )
+    email.send()
+
+    return HttpResponseRedirect(reverse('reactivation_successful'))

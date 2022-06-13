@@ -1,8 +1,9 @@
-from django.urls import path
 from django.contrib.auth import views as auth_views
+from django.urls import path
+
 from blog.views import Home, SearchView, CategoryView, PostListView, PostDetailView, PhotoDetailView, PostListRest, \
     PostDetailRest, Login, TagIndexView, SignUpView, PwResetView, activate, PwResetDoneView, PwResetConfirmView, \
-    PwResetCompleteView, resend_activation, ResendActivaton
+    PwResetCompleteView, resend_activation, ResendActivaton, ProfileView
 
 urlpatterns = [
     path('search', SearchView.as_view(), name='search'),
@@ -18,6 +19,8 @@ urlpatterns = [
 
     path('login/', Login.as_view(), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
+    path('me/', ProfileView.as_view(), name='profile'),
 
     path('password_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
     path('password_change/done/', auth_views.PasswordChangeDoneView.as_view(), name='password_change_done'),

@@ -1,8 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import AccessMixin
-from django.shortcuts import redirect, reverse
-from django.core.exceptions import PermissionDenied
 from django.contrib.auth.views import redirect_to_login
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect, reverse
+from django.views.generic.detail import SingleObjectMixin
+
+from blog.models import CustomUser
 
 
 class ActiveRequiredMixin(AccessMixin):
@@ -24,3 +27,15 @@ class ActiveRequiredMixin(AccessMixin):
         if not request.user.is_active:
             return self.handle_inactive()
         return super().dispatch(request, *args, **kwargs)
+
+
+class ProfileObjectMixin(SingleObjectMixin):
+    model = CustomUser
+    fields = '__all__'
+
+    def get_object(self, queryset=None):
+        try:
+            return self.request.user
+        except Exception:
+            raise NotImplemented("User profile not implemented yet.")
+

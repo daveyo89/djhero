@@ -1,8 +1,9 @@
 import cloudinary.uploader
 from django.db.models.signals import pre_delete, post_save
 from django.dispatch import receiver, Signal
-from .telegram_bot import telegram_bot_sendtext
+
 from .models import PostImage, CustomUser
+from .telegram_bot import telegram_bot_sendtext
 
 
 @receiver(post_save, sender=CustomUser)

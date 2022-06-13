@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from blog.models import Category, Post, PostImage, PostVideo, Introduction
 from django.utils.translation import gettext_lazy as _
+
+from blog.models import Category, Post, PostImage, PostVideo, Introduction
 from .models import CustomUser
 
 
