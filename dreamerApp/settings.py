@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import os
 
-import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 
@@ -162,6 +161,7 @@ CLOUDINARY_STORAGE = {
     'API_KEY': os.environ.get("API_KEY"),
     'API_SECRET': os.environ.get("API_SECRET"),
 }
+
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Login/Logout Redirect urls
