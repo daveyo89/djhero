@@ -15,7 +15,7 @@ from django.db.models import Count
 from django.http import HttpResponseRedirect, HttpResponse
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy, reverse
-from django.utils.encoding import force_bytes, force_text
+from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
@@ -269,7 +269,7 @@ class PostDetailRest(generics.RetrieveUpdateDestroyAPIView):
 
 def activate(request, uidb64, token):
     try:
-        uid = force_text(urlsafe_base64_decode(uidb64))
+        uid = force_str(urlsafe_base64_decode(uidb64))
         user = CustomUser.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, CustomUser.DoesNotExist):
         user = None

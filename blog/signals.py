@@ -12,7 +12,7 @@ def telegram_user_registered(sender, instance, created, **kwargs):
         telegram_bot_sendtext(instance.email + " has registered to your site!")
 
 
-user_activated = Signal(providing_args=["msg"])
+user_activated = Signal()
 
 
 @receiver(user_activated)
