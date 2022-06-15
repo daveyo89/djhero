@@ -6,7 +6,7 @@ from django.contrib.auth import login, get_user
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, \
-    PasswordResetCompleteView
+    PasswordResetCompleteView, LogoutView
 from django.contrib.messages.views import SuccessMessageMixin, messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
@@ -66,6 +66,13 @@ class Login(SuccessMessageMixin, LoginView):
     template_name = 'blog/login.html'
     success_message = 'Login successful!'
     authentication_form = CustomAuthenticationForm
+
+
+class Logout(SuccessMessageMixin, LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            messages.info(request, "You have successfully logged out.")
+        return super().dispatch(request, *args, **kwargs)
 
 
 class SignUpView(SuccessMessageMixin, CreateView):

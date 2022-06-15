@@ -3,7 +3,7 @@ from django.urls import path
 
 from blog.views import Home, SearchView, CategoryView, PostListView, PostDetailView, PhotoDetailView, PostListRest, \
     PostDetailRest, Login, TagIndexView, SignUpView, PwResetView, activate, PwResetDoneView, PwResetConfirmView, \
-    PwResetCompleteView, resend_activation, ResendActivaton, ProfileView
+    PwResetCompleteView, resend_activation, ResendActivaton, ProfileView, Logout
 
 urlpatterns = [
     path('search', SearchView.as_view(), name='search'),
@@ -18,7 +18,7 @@ urlpatterns = [
     path('reactivation_succesful/', ResendActivaton.as_view(), name='reactivation_successful'),
 
     path('login/', Login.as_view(), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', Logout.as_view(), name='logout'),
 
     path('me/', ProfileView.as_view(), name='profile'),
 
