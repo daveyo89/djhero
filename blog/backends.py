@@ -1,6 +1,5 @@
-from django.contrib.auth import backends
+from django.contrib.auth.backends import AllowAllUsersModelBackend
 
 
-class CustomModelBackend(backends.ModelBackend):
-    def user_can_authenticate(self, user):
-        return True
+class CustomModelBackend(AllowAllUsersModelBackend):
+    ...
