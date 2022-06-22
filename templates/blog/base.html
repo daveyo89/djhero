@@ -22,7 +22,6 @@
 
 <nav class="navbar navbar-expand navbar-dark sticky-top bg-dark">
     <a class="navbar-brand" href="{% url 'index' %}">Morgenröte Zeitung</a>
-
     <div class="collapse navbar-collapse">
         <ul class="navbar-nav mr-auto ">
             <li class="nav-item">
@@ -38,12 +37,15 @@
             {% endif %}
 
         </ul>
+        {% if user.is_authenticated %}
+        <a class="d-md-block btn btn-danger wrn-btn ml-auto mr-1" href="{% url 'logout' %}">Logout</a>
+        {% endif %}
 
         <form method="GET" action="{% url 'search' %}" class="form-inline my-2 my-lg-0">
             {% csrf_token %}
             <input name="query" class="form-control mr-sm-2" type="text" placeholder="Search"
                    aria-label="Search">
-                    <button type="submit" class="d-none d-md-block btn btn-danger wrn-btn nav-item">Search</button>
+            <button type="submit" class="d-none d-md-block btn btn-success wrn-btn nav-item">Search</button>
         </form>
     </div>
 </nav>
@@ -53,34 +55,34 @@
 
     <div class="container">
         {% for message in messages %}
-<div style="align-self: center" onclick="this.style.visibility='hidden';"
-     class="alert {{ message.tags }} alert-dismissible" role="alert">
-    <button type="button" class="close" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-    </button>
-    {{ message | safe }}
-</div>
-{% endfor %}
-{% if form.errors %}
-    {% for field in form %}
+        <div style="align-self: center" onclick="this.style.visibility='hidden';"
+             class="alert {{ message.tags }} alert-dismissible" role="alert">
+            <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            {{ message | safe }}
+        </div>
+        {% endfor %}
+        {% if form.errors %}
+        {% for field in form %}
         {% for error in field.errors %}
         <div class="alert alert-danger">
             <strong>{{ error|escape }}</strong>
         </div>
         {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-    <div class="alert alert-danger">
-        <strong>{{ error|escape }}</strong>
-    </div>
-    {% endfor %}
-{% endif %}
+        {% endfor %}
+        {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+        {% endfor %}
+        {% endif %}
         {% block content %}
         {% endblock %}
     </div>
-<hr>
-{% include 'blog/footer.html' %}
-    </main>
+    <hr>
+    {% include 'blog/footer.html' %}
+</main>
 
 </body>
 </html>
